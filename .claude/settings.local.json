@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__supabase__list_organizations",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__get_cost",
+      "mcp__supabase__confirm_cost",
+      "mcp__supabase__create_project",
+      "mcp__supabase__get_project_url",
+      "mcp__supabase__get_publishable_keys",
+      "mcp__supabase__list_tables",
+      "Bash(python -c \"import sys, base64; print\\(base64.b64decode\\(sys.stdin.read\\(\\).strip\\(\\)\\).decode\\(\\)\\)\")",
+      "mcp__supabase__execute_sql",
+      "PowerShell([System.Text.Encoding]::UTF8.GetString\\([System.Convert]::FromBase64String\\(\"cHJpbWUtYW5lbW9uZS04MC5jbGVyay5hY2NvdW50cy5kZXYk\"\\)\\))"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
+}
