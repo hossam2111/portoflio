@@ -12,7 +12,7 @@ const MOCK_PROJECTS = [
     slug: "luxury-furniture-collection",
     category: "Interior Design",
     tech: ["AutoCAD", "ArtCAM", "3ds Max"],
-    image: "/images/project1.png",
+    image: "https://qwznevdakjcylosajrxj.supabase.co/storage/v1/object/public/portfolio/images/project1.png",
   },
   {
     id: "2",
@@ -20,7 +20,7 @@ const MOCK_PROJECTS = [
     slug: "industrial-component-machining",
     category: "CNC Programming",
     tech: ["Maestro", "EasyWOOD"],
-    image: "/images/project2.png",
+    image: "https://qwznevdakjcylosajrxj.supabase.co/storage/v1/object/public/portfolio/images/project2.png",
   },
   {
     id: "3",
@@ -28,7 +28,7 @@ const MOCK_PROJECTS = [
     slug: "decorative-wood-panel-series",
     category: "Interior Design",
     tech: ["ArtCAM", "Rhino"],
-    image: "/images/project3.png",
+    image: "https://qwznevdakjcylosajrxj.supabase.co/storage/v1/object/public/portfolio/images/project3.png",
   },
   {
     id: "4",
@@ -36,7 +36,7 @@ const MOCK_PROJECTS = [
     slug: "cnc-router-optimization-system",
     category: "Automation",
     tech: ["EasyWOOD", "Maestro"],
-    image: "/images/project4.png",
+    image: "https://qwznevdakjcylosajrxj.supabase.co/storage/v1/object/public/portfolio/images/project4.png",
   },
   {
     id: "5",
@@ -44,7 +44,7 @@ const MOCK_PROJECTS = [
     slug: "3d-architectural-carvings",
     category: "3D Design",
     tech: ["Rhino", "3ds Max", "ArtCAM"],
-    image: "/images/project5.png",
+    image: "https://qwznevdakjcylosajrxj.supabase.co/storage/v1/object/public/portfolio/images/project5.png",
   },
   {
     id: "6",
@@ -52,7 +52,7 @@ const MOCK_PROJECTS = [
     slug: "custom-toolpath-library",
     category: "CNC Programming",
     tech: ["ArtCAM", "AutoCAD"],
-    image: "/images/project6.png",
+    image: "https://qwznevdakjcylosajrxj.supabase.co/storage/v1/object/public/portfolio/images/project6.png",
   }
 ];
 
@@ -95,7 +95,7 @@ export function Projects() {
             category: p.category?.name || "CNC Work",
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             tech: p.technologies?.map((t: any) => t.technology_name) || [],
-            image: p.cover_image || "/images/project1.png"
+            image: p.cover_image || "https://qwznevdakjcylosajrxj.supabase.co/storage/v1/object/public/portfolio/images/project1.png"
           }));
           setProjects(mapped);
         } else {
