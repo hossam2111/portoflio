@@ -11,7 +11,11 @@
       "mcp__supabase__list_tables",
       "Bash(python -c \"import sys, base64; print\\(base64.b64decode\\(sys.stdin.read\\(\\).strip\\(\\)\\).decode\\(\\)\\)\")",
       "mcp__supabase__execute_sql",
-      "PowerShell([System.Text.Encoding]::UTF8.GetString\\([System.Convert]::FromBase64String\\(\"cHJpbWUtYW5lbW9uZS04MC5jbGVyay5hY2NvdW50cy5kZXYk\"\\)\\))"
+      "PowerShell([System.Text.Encoding]::UTF8.GetString\\([System.Convert]::FromBase64String\\(\"cHJpbWUtYW5lbW9uZS04MC5jbGVyay5hY2NvdW50cy5kZXYk\"\\)\\))",
+      "Bash(Select-String -Pattern '\"version\"')",
+      "Bash(Select-Object -First 3)",
+      "Bash(ls app/admin/)",
+      "Bash(dir app/admin/)"
     ]
   },
   "enableAllProjectMcpServers": true,

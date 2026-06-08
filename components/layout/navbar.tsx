@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const navLinks = [
   { name: "About", href: "#about" },
@@ -86,14 +87,22 @@ export default function Navbar() {
       }`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
-        <a 
-          href={pathname === "/" ? "#home" : "/#home"} 
+        <a
+          href={pathname === "/" ? "#home" : "/#home"}
           onClick={(e) => scrollToSection(e, "#home")}
-          className="text-xl font-bold tracking-tighter flex items-center gap-2 group"
+          className="flex items-center"
           data-testid="link-home"
         >
-          <span className="text-primary group-hover:text-primary/80 transition-colors">I.Y</span>
-          <span className="hidden sm:inline-block font-mono text-sm opacity-70">CNC.MASTER</span>
+          <div className="bg-white rounded-xl p-1 shadow-sm">
+            <Image
+              src="/logo.png"
+              alt="Ibrahim Younes"
+              width={160}
+              height={160}
+              className="h-14 w-auto"
+              priority
+            />
+          </div>
         </a>
 
         {/* Desktop Nav */}
