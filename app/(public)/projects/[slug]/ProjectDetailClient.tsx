@@ -64,15 +64,18 @@ const fadeUp = {
 };
 
 export default function ProjectDetailClient({ project }: { project: Project }) {
-  const [activeTab, setActiveTab] = useState("Overview");
+  const hasMedia = !!(project.project_media && project.project_media.length > 0);
+  const hasVideo = !!project.youtube_url;
+  const [activeTab, setActiveTab] = useState(hasMedia ? "Gallery" : hasVideo ? "Video" : "Overview");
 
-  // Filter tabs dynamically based on available content
-  const tabs = ["Overview"];
+  // Gallery and Video come first, then the rest
+  const tabs: string[] = [];
+  if (hasMedia) tabs.push("Gallery");
+  if (hasVideo) tabs.push("Video");
+  tabs.push("Overview");
   if (project.challenge) tabs.push("Challenge");
   if (project.solution) tabs.push("Solution");
   if (project.process) tabs.push("Process");
-  if (project.project_media && project.project_media.length > 0) tabs.push("Gallery");
-  if (project.youtube_url) tabs.push("Video");
   if (project.technologies && project.technologies.length > 0) tabs.push("Technologies");
   if (project.materials && project.materials.length > 0) tabs.push("Materials");
   if (project.results) tabs.push("Results");
