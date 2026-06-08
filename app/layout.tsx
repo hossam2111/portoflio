@@ -35,9 +35,9 @@ export const metadata: Metadata = {
       "Professional engineering portfolio showcasing CNC programming, CAD/CAM design, woodworking, and custom manufacturing.",
     images: [
       {
-        url: "https://ibrahim.thefuture-makers.com/logo.png",
-        width: 1080,
-        height: 1080,
+        url: "https://ibrahim.thefuture-makers.com/og-image.jpg",
+        width: 1200,
+        height: 630,
         alt: "Ibrahim Younes - CNC Programmer & Designer",
       },
     ],
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: "Ibrahim Younes | CNC Design & Custom Woodworking",
     description:
       "Professional engineering portfolio showcasing CNC programming, CAD/CAM design, woodworking, and custom manufacturing.",
-    images: ["https://ibrahim.thefuture-makers.com/logo.png"],
+    images: ["https://ibrahim.thefuture-makers.com/og-image.jpg"],
   },
   robots: {
     index: true,
