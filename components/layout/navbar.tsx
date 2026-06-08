@@ -93,13 +93,13 @@ export default function Navbar() {
           className="flex items-center"
           data-testid="link-home"
         >
-          <div className="bg-white rounded-xl p-1 shadow-sm">
+          <div className="hover:opacity-85 transition-opacity flex items-center">
             <Image
               src="/logo.png"
               alt="Ibrahim Younes"
               width={160}
               height={160}
-              className="h-14 w-auto"
+              className="h-12 md:h-14 w-auto object-contain"
               priority
             />
           </div>
