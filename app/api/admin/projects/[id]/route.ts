@@ -137,7 +137,7 @@ export async function PUT(
       if (gallery.length > 0) {
         const mediaInserts = gallery.map((item: any, index: number) => ({
           project_id: id,
-          media_type: "image",
+          media_type: item.media_type || "image",
           file_url: item.file_url,
           caption: item.caption || null,
           sort_order: index,

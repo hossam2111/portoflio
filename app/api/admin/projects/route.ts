@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     if (Array.isArray(gallery) && gallery.length > 0) {
       const mediaInserts = gallery.map((item: any, index: number) => ({
         project_id: projectId,
-        media_type: "image",
+        media_type: item.media_type || "image",
         file_url: item.file_url,
         caption: item.caption || null,
         sort_order: index,

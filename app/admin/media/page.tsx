@@ -124,6 +124,33 @@ export default function AdminMediaPage() {
     }
   };
 
+  const handleSingleDelete = async (name: string, id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm(`Are you sure you want to delete this file: ${name}?`)) return;
+
+    try {
+      setIsLoading(true);
+      const res = await fetch("/api/admin/media", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileNames: [name] }),
+      });
+
+      if (res.ok) {
+        setMediaItems((prev) => prev.filter((item) => item.id !== id));
+        setSelectedItems((prev) => prev.filter((x) => x !== id));
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to delete file");
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert("An error occurred during file deletion");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getFilteredItems = () => {
     return mediaItems.filter((item) => {
       const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -279,8 +306,17 @@ export default function AdminMediaPage() {
                 </div>
               )}
 
+              {/* Delete Button */}
+              <button
+                onClick={(e) => handleSingleDelete(item.name, item.id, e)}
+                className="absolute top-2 right-2 p-1.5 bg-red-500 hover:bg-red-600 rounded-lg text-white opacity-0 group-hover:opacity-100 transition-opacity z-10 cursor-pointer"
+                title="Delete file"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+
               {/* Copy URL Hover Indicator */}
-              <div className="absolute top-2 right-2 p-1.5 rounded-lg bg-[#0E141D]/80 border border-[#1E293B] opacity-0 group-hover:opacity-100 transition-opacity z-10">
+              <div className="absolute top-2 right-10 p-1.5 rounded-lg bg-[#0E141D]/80 border border-[#1E293B] opacity-0 group-hover:opacity-100 transition-opacity z-10">
                 <Copy className="w-3 h-3 text-[#94A3B8]" />
               </div>
 

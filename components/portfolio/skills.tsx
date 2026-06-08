@@ -88,7 +88,7 @@ export function Skills() {
               <h3 className="text-2xl font-semibold mb-8 border-b border-border pb-4">Education</h3>
               <div className="relative pl-6 border-l-2 border-primary/30">
                 <div className="absolute w-3 h-3 bg-primary rounded-full -left-[7px] top-2"></div>
-                <h4 className="text-xl font-bold text-foreground">Bachelor's in Law and Sharia</h4>
+                <h4 className="text-xl font-bold text-foreground">Bachelor&apos;s in Law and Sharia</h4>
                 <p className="text-primary font-medium mb-2">Al-Azhar University, Cairo</p>
                 <p className="text-muted-foreground">GPA: 3.2</p>
                 <p className="text-muted-foreground mt-2 text-sm">

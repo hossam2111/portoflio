@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Plus, Trash, Loader2, Play } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash, Loader2, Play, Upload } from "lucide-react";
 import { slugify, extractYouTubeId, getYouTubeThumbnail } from "@/lib/utils";
 
 interface Category {
@@ -52,9 +52,11 @@ export default function NewProjectPage() {
   const [newMaterial, setNewMaterial] = useState("");
 
   // Gallery items
-  const [gallery, setGallery] = useState<{ file_url: string; caption?: string }[]>([]);
+  const [gallery, setGallery] = useState<{ file_url: string; caption?: string; media_type?: "image" | "video" }[]>([]);
   const [newGalleryUrl, setNewGalleryUrl] = useState("");
   const [newGalleryCaption, setNewGalleryCaption] = useState("");
+  const [newGalleryMediaType, setNewGalleryMediaType] = useState<"image" | "video">("image");
+  const [isUploadingGallery, setIsUploadingGallery] = useState(false);
 
   // Fetch categories on mount
   useEffect(() => {
@@ -111,13 +113,53 @@ export default function NewProjectPage() {
   const addGalleryItem = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newGalleryUrl.trim()) return;
-    setGallery([...gallery, { file_url: newGalleryUrl.trim(), caption: newGalleryCaption.trim() || undefined }]);
+    setGallery([
+      ...gallery,
+      {
+        file_url: newGalleryUrl.trim(),
+        caption: newGalleryCaption.trim() || undefined,
+        media_type: newGalleryMediaType,
+      },
+    ]);
     setNewGalleryUrl("");
     setNewGalleryCaption("");
+    setNewGalleryMediaType("image");
   };
 
   const removeGalleryItem = (index: number) => {
     setGallery(gallery.filter((_, i) => i !== index));
+  };
+
+  const handleGalleryFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
+
+    try {
+      setIsUploadingGallery(true);
+      const formData = new FormData();
+      formData.append("files", fileList[0]);
+
+      const res = await fetch("/api/admin/media", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.files && data.files.length > 0) {
+          setNewGalleryUrl(data.files[0].url);
+          setNewGalleryMediaType(data.files[0].type);
+        }
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to upload file");
+      }
+    } catch (err) {
+      console.error("Gallery file uploader error:", err);
+      alert("An error occurred during file upload");
+    } finally {
+      setIsUploadingGallery(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -380,18 +422,42 @@ export default function NewProjectPage() {
           <div className="glass-card p-6 space-y-4">
             <h3 className="text-sm font-semibold text-[#F59E0B]">Project Gallery</h3>
             <div className="bg-[#05070A] p-4 rounded-xl border border-[#1E293B] space-y-4">
-              <div className="grid sm:grid-cols-3 gap-3">
-                <div className="sm:col-span-2">
-                  <label className="block text-xs text-[#64748B] mb-1">Image URL</label>
-                  <input
-                    type="url"
-                    value={newGalleryUrl}
-                    onChange={(e) => setNewGalleryUrl(e.target.value)}
-                    className="input-base text-sm"
-                    placeholder="Paste image URL from Media Library"
-                  />
+              <div className="grid sm:grid-cols-12 gap-3">
+                <div className="sm:col-span-6">
+                  <label className="block text-xs text-[#64748B] mb-1">Media URL (Image or Video)*</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      value={newGalleryUrl}
+                      onChange={(e) => setNewGalleryUrl(e.target.value)}
+                      className="input-base text-sm"
+                      placeholder="Paste image/video URL or upload ->"
+                    />
+                    <label className="btn-secondary text-xs shrink-0 cursor-pointer flex items-center justify-center px-3 gap-1.5 min-w-[90px]">
+                      {isUploadingGallery ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                      {isUploadingGallery ? "Uploading" : "Upload"}
+                      <input
+                        type="file"
+                        accept="image/*,video/*"
+                        className="hidden"
+                        onChange={handleGalleryFileUpload}
+                        disabled={isUploadingGallery}
+                      />
+                    </label>
+                  </div>
                 </div>
-                <div>
+                <div className="sm:col-span-3">
+                  <label className="block text-xs text-[#64748B] mb-1">Type</label>
+                  <select
+                    value={newGalleryMediaType}
+                    onChange={(e) => setNewGalleryMediaType(e.target.value as "image" | "video")}
+                    className="input-base text-sm"
+                  >
+                    <option value="image">Image (Photo)</option>
+                    <option value="video">Video</option>
+                  </select>
+                </div>
+                <div className="sm:col-span-3">
                   <label className="block text-xs text-[#64748B] mb-1">Caption (Optional)</label>
                   <input
                     type="text"
@@ -407,30 +473,59 @@ export default function NewProjectPage() {
                 onClick={addGalleryItem}
                 className="btn-secondary w-full text-xs"
               >
-                Add Image to Gallery
+                Add Item to Gallery
               </button>
             </div>
 
             {/* Gallery list */}
             {gallery.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {gallery.map((item, index) => (
-                  <div key={index} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#1E293B] bg-black group">
-                    <img src={item.file_url} className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => removeGalleryItem(index)}
-                      className="absolute top-2 right-2 p-1.5 bg-red-500 hover:bg-red-600 rounded-lg text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Trash className="w-3.5 h-3.5" />
-                    </button>
-                    {item.caption && (
-                      <div className="absolute inset-x-0 bottom-0 bg-black/80 p-2 text-[10px] text-[#94A3B8] truncate">
-                        {item.caption}
+                {gallery.map((item, index) => {
+                  const isVideo = item.media_type === "video";
+                  const ytId = isVideo ? extractYouTubeId(item.file_url) : null;
+                  const ytThumbnail = ytId ? getYouTubeThumbnail(ytId) : null;
+
+                  return (
+                    <div key={index} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#1E293B] bg-black group">
+                      {isVideo ? (
+                        ytThumbnail ? (
+                          <div className="w-full h-full relative">
+                            <img src={ytThumbnail} className="w-full h-full object-cover opacity-80" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                              <Play className="w-8 h-8 text-[#F59E0B] fill-[#F59E0B]" />
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="w-full h-full relative">
+                            <video src={item.file_url} muted className="w-full h-full object-cover opacity-75" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                              <Play className="w-8 h-8 text-[#F59E0B] fill-[#F59E0B]" />
+                            </div>
+                          </div>
+                        )
+                      ) : (
+                        <img src={item.file_url} className="w-full h-full object-cover" />
+                      )}
+
+                      <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-black/60 text-[9px] font-mono text-[#94A3B8] border border-[#1E293B]">
+                        {item.media_type === "video" ? "Video" : "Photo"}
                       </div>
-                    )}
-                  </div>
-                ))}
+
+                      <button
+                        type="button"
+                        onClick={() => removeGalleryItem(index)}
+                        className="absolute top-2 right-2 p-1.5 bg-red-500 hover:bg-red-600 rounded-lg text-white z-10"
+                      >
+                        <Trash className="w-3.5 h-3.5" />
+                      </button>
+                      {item.caption && (
+                        <div className="absolute inset-x-0 bottom-0 bg-black/80 p-2 text-[10px] text-[#94A3B8] truncate">
+                          {item.caption}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

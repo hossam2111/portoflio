@@ -183,7 +183,7 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
       </section>
 
       {/* Tabs */}
-      <section className="border-b border-[#1E293B] sticky top-16 md:top-20 z-30 bg-[#05070A]/90 backdrop-blur-xl">
+      <section className="border-b border-[#1E293B] z-30 bg-[#05070A]">
         <div className="container-custom">
           <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide py-3">
             {tabs.map((tab) => (
@@ -207,9 +207,9 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
       {/* Tab Content */}
       <section className="py-12 md:py-16">
         <div className="container-custom">
-          <div className="grid lg:grid-cols-3 gap-10">
+          <div className="space-y-12">
             {/* Main Content */}
-            <div className="lg:col-span-2">
+            <div className="w-full">
               {activeTab === "Overview" && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
                   <div>
@@ -285,34 +285,93 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
               )}
 
               {activeTab === "Gallery" && project.project_media && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                  <h2 className="text-xl font-semibold mb-4">Project Gallery</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    {project.project_media.map((media) => (
-                      <div
-                        key={media.id}
-                        className="aspect-[4/3] rounded-xl border border-[#1E293B] bg-gradient-to-br from-[#101722] to-[#0E141D] overflow-hidden relative group"
-                      >
-                        <img
-                          src={media.file_url}
-                          alt={media.caption || project.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                        {media.caption && (
-                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-3 text-xs text-[#F1F5F9]">
-                            {media.caption}
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12">
+                  {(() => {
+                    const imagesMedia = project.project_media.filter(m => m.media_type === "image");
+                    const videosMedia = project.project_media.filter(m => m.media_type === "video");
+
+                    return (
+                      <>
+                        {imagesMedia.length > 0 && (
+                          <div>
+                            <h2 className="text-xl font-semibold mb-6">Photos Gallery</h2>
+                            <div className="grid grid-cols-2 gap-6">
+                              {imagesMedia.map((media) => (
+                                <div
+                                  key={media.id}
+                                  className="aspect-[4/3] rounded-xl border border-[#1E293B] bg-gradient-to-br from-[#101722] to-[#0E141D] overflow-hidden relative group"
+                                >
+                                  <img
+                                    src={media.file_url}
+                                    alt={media.caption || project.title}
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                  />
+                                  {media.caption && (
+                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-sm text-[#F1F5F9]">
+                                      {media.caption}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
-                      </div>
-                    ))}
-                  </div>
+
+                        {videosMedia.length > 0 && (
+                          <div>
+                            <h2 className="text-xl font-semibold mb-6">Videos Gallery</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                              {videosMedia.map((media) => (
+                                <div
+                                  key={media.id}
+                                  className="aspect-video rounded-xl border border-[#1E293B] bg-black overflow-hidden relative"
+                                >
+                                  {(() => {
+                                    const yId = extractYouTubeId(media.file_url);
+                                    if (yId) {
+                                      return (
+                                        <iframe
+                                          src={getYouTubeEmbedUrl(yId)}
+                                          title={media.caption || "Gallery Video"}
+                                          className="w-full h-full"
+                                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                          allowFullScreen
+                                        />
+                                      );
+                                    } else {
+                                      return (
+                                        <video
+                                          src={media.file_url}
+                                          controls
+                                          className="w-full h-full object-cover"
+                                        />
+                                      );
+                                    }
+                                  })()}
+                                  {media.caption && (
+                                    <div className="absolute inset-x-0 bottom-0 bg-black/60 p-3 text-xs text-[#94A3B8] pointer-events-none truncate">
+                                      {media.caption}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </motion.div>
               )}
 
               {activeTab === "Video" && youtubeEmbedUrl && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                   <h2 className="text-xl font-semibold mb-4">Project Showcase Video</h2>
-                  <div className="aspect-video w-full rounded-xl border border-[#1E293B] bg-gradient-to-br from-[#101722] to-[#0E141D] overflow-hidden">
+                  <div className={
+                    project.youtube_url?.includes('/shorts/') 
+                      ? "aspect-[9/16] w-full max-w-sm mx-auto rounded-xl border border-[#1E293B] bg-black overflow-hidden shadow-2xl shadow-black/50"
+                      : "aspect-video w-full rounded-xl border border-[#1E293B] bg-gradient-to-br from-[#101722] to-[#0E141D] overflow-hidden"
+                  }>
                     <iframe
                       src={youtubeEmbedUrl}
                       title={`${project.title} Video Showcase`}
@@ -364,74 +423,77 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
               )}
             </div>
 
-            {/* Sidebar */}
-            <div>
-              <div className="glass-card p-6 sticky top-36">
-                <h3 className="text-sm font-semibold mb-4 text-[#F59E0B]">
-                  Project Details
-                </h3>
-                <div className="space-y-4">
-                  {project.category?.name && (
-                    <>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-[#64748B]">Category</span>
-                        <span>{project.category.name}</span>
+            {/* Project Details & Inquiry Section (Bottom Layout) */}
+            <div className="border-t border-[#1E293B] pt-12 mt-12">
+              <div className="grid md:grid-cols-2 gap-8 items-start">
+                
+                {/* Left Column: Project Details and Technical Specifications */}
+                <div className="glass-card p-8 space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4 text-[#F59E0B] tracking-wide">
+                      Project Details
+                    </h3>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {project.category?.name && (
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs text-[#64748B] uppercase tracking-wider font-semibold font-mono">Category</span>
+                          <span className="text-sm font-medium">{project.category.name}</span>
+                        </div>
+                      )}
+                      {project.client_name && (
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs text-[#64748B] uppercase tracking-wider font-semibold font-mono">Client</span>
+                          <span className="text-sm font-medium">{project.client_name}</span>
+                        </div>
+                      )}
+                      {project.location && (
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs text-[#64748B] uppercase tracking-wider font-semibold font-mono">Location</span>
+                          <span className="text-sm font-medium">{project.location}</span>
+                        </div>
+                      )}
+                      {project.duration && (
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs text-[#64748B] uppercase tracking-wider font-semibold font-mono">Duration</span>
+                          <span className="text-sm font-medium">{project.duration}</span>
+                        </div>
+                      )}
+                      {formattedDate && (
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs text-[#64748B] uppercase tracking-wider font-semibold font-mono">Completion</span>
+                          <span className="text-sm font-medium">{formattedDate}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {project.technical_specs && (
+                    <div className="border-t border-[#1E293B] pt-6">
+                      <h4 className="text-sm font-semibold mb-3 text-[#F1F5F9]">
+                        Technical Specifications
+                      </h4>
+                      <div className="text-xs text-[#94A3B8] space-y-1 font-mono whitespace-pre-line bg-[#05070A]/50 p-4 rounded-xl border border-[#1E293B]">
+                        {project.technical_specs}
                       </div>
-                      <div className="border-t border-[#1E293B]" />
-                    </>
-                  )}
-                  {project.client_name && (
-                    <>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-[#64748B]">Client</span>
-                        <span>{project.client_name}</span>
-                      </div>
-                      <div className="border-t border-[#1E293B]" />
-                    </>
-                  )}
-                  {project.location && (
-                    <>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-[#64748B]">Location</span>
-                        <span>{project.location}</span>
-                      </div>
-                      <div className="border-t border-[#1E293B]" />
-                    </>
-                  )}
-                  {project.duration && (
-                    <>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-[#64748B]">Duration</span>
-                        <span>{project.duration}</span>
-                      </div>
-                      <div className="border-t border-[#1E293B]" />
-                    </>
-                  )}
-                  {formattedDate && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-[#64748B]">Completion</span>
-                      <span>{formattedDate}</span>
                     </div>
                   )}
                 </div>
 
-                {/* Technical Specs */}
-                {project.technical_specs && (
-                  <div className="mt-6 pt-6 border-t border-[#1E293B]">
-                    <h4 className="text-sm font-semibold mb-3">
-                      Technical Specifications
-                    </h4>
-                    <div className="text-xs text-[#94A3B8] space-y-1 font-mono whitespace-pre-line">
-                      {project.technical_specs}
-                    </div>
+                {/* Right Column: Inquiry Action */}
+                <div className="glass-card p-8 flex flex-col justify-between h-full bg-gradient-to-br from-[#101722]/50 to-[#0E141D]/50 border border-[#1E293B] hover:border-[#F59E0B]/30 transition-all duration-300">
+                  <div className="space-y-4 mb-6">
+                    <h3 className="text-lg font-semibold text-[#F59E0B]">
+                      Interested in a similar project?
+                    </h3>
+                    <p className="text-sm text-[#94A3B8] leading-relaxed">
+                      If you're inspired by this project and would like to build something custom suited to your specifications, let's talk and explore the possibilities together.
+                    </p>
                   </div>
-                )}
-
-                <div className="mt-6">
-                  <Link href="/contact" className="btn-primary w-full text-sm">
+                  <Link href="/contact" className="btn-primary w-full text-center py-3 text-sm font-semibold flex items-center justify-center transition-all duration-300 hover:scale-[1.02]">
                     Inquire About Similar Project
                   </Link>
                 </div>
+
               </div>
             </div>
           </div>

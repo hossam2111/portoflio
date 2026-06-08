@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { Mail, MapPin, Phone, Send, MessageCircle } from "lucide-react";
 import { LinkedInIcon, GithubIcon } from "@/components/ui/social-icons";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
@@ -108,10 +108,16 @@ export function Contact() {
                     <Phone className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground font-medium mb-1">Phone</p>
-                    <a href="tel:+201066038136" className="text-foreground font-medium hover:text-primary transition-colors">
-                      +20 1066038136
-                    </a>
+                    <p className="text-sm text-muted-foreground font-medium mb-1">Phone / WhatsApp</p>
+                    <div className="flex flex-col gap-1">
+                      <a href="tel:+201066038136" className="text-foreground font-medium hover:text-primary transition-colors">
+                        +20 1066038136
+                      </a>
+                      <a href="https://wa.me/201066038136" target="_blank" rel="noopener noreferrer" className="text-xs text-primary font-medium hover:underline flex items-center gap-1 mt-0.5">
+                        <MessageCircle className="h-3.5 w-3.5" />
+                        Chat on WhatsApp
+                      </a>
+                    </div>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">

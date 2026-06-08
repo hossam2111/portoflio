@@ -30,7 +30,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
 
 # vercel
@@ -39,3 +39,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# YouTube upload automation scripts (dev only)
+batch_upload_youtube.mjs
+intercept_video_ids.mjs
+fix_drafts.mjs
+debug_*.mjs
+get_*.mjs
+upload_test.mjs
+take_screenshot.mjs
+categories.json
+video_ids.json
+studio_*.json
+studio_*.png
+check_videos.ps1
+generate_thumbnails.ps1
+public/thumbnails/

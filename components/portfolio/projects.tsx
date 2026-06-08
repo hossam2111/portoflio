@@ -56,15 +56,22 @@ const MOCK_PROJECTS = [
   }
 ];
 
+interface Project {
+  id: string;
+  title: string;
+  slug: string;
+  category: string;
+  tech: string[];
+  image: string;
+}
+
 export function Projects() {
   const [filter, setFilter] = useState("All");
-  const [projects, setProjects] = useState<any[]>(MOCK_PROJECTS);
-  const [isLoading, setIsLoading] = useState(true);
+  const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
 
   useEffect(() => {
     async function loadProjects() {
       try {
-        setIsLoading(true);
         const { data, error } = await supabase
           .from("projects")
           .select(`
@@ -80,11 +87,13 @@ export function Projects() {
 
         if (error) throw error;
         if (data && data.length > 0) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const mapped = data.map((p: any) => ({
             id: p.id,
             title: p.title,
             slug: p.slug,
             category: p.category?.name || "CNC Work",
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             tech: p.technologies?.map((t: any) => t.technology_name) || [],
             image: p.cover_image || "/images/project1.png"
           }));
@@ -95,8 +104,6 @@ export function Projects() {
       } catch (err) {
         console.error("Failed to fetch database projects, using mock:", err);
         setProjects(MOCK_PROJECTS);
-      } finally {
-        setIsLoading(false);
       }
     }
     loadProjects();

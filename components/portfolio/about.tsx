@@ -45,7 +45,7 @@ export function About() {
               I am a dedicated CNC Programmer and Designer with a passion for transforming complex digital models into tangible, high-quality products. Over the past 7 years, I have honed my skills in precision manufacturing, workflow optimization, and CAD/CAM software.
             </p>
             <p className="text-muted-foreground text-lg leading-relaxed mb-10">
-              My approach combines technical rigor with an eye for design, allowing me to bridge the gap between creative concept and mechanical execution. Whether programming intricate architectural carvings or machining industrial components with zero tolerance for error, I approach every project with a master craftsman's mindset.
+              My approach combines technical rigor with an eye for design, allowing me to bridge the gap between creative concept and mechanical execution. Whether programming intricate architectural carvings or machining industrial components with zero tolerance for error, I approach every project with a master craftsman&apos;s mindset.
             </p>
 
             <div className="grid grid-cols-3 gap-6">

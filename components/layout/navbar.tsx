@@ -10,6 +10,7 @@ const navLinks = [
   { name: "Skills", href: "#skills" },
   { name: "Experience", href: "#experience" },
   { name: "Projects", href: "#projects" },
+  { name: "Videos", href: "#videos" },
   { name: "Services", href: "#services" },
   { name: "Certificates", href: "#certificates" },
   { name: "Contact", href: "#contact" },
@@ -31,6 +32,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "dark";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(savedTheme);
     if (savedTheme === "dark") {
       document.documentElement.classList.add("dark");

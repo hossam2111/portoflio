@@ -5,6 +5,7 @@ import { About } from "@/components/portfolio/about";
 import { Skills } from "@/components/portfolio/skills";
 import { Experience } from "@/components/portfolio/experience";
 import { Projects } from "@/components/portfolio/projects";
+import { VideoShorts } from "@/components/portfolio/video-shorts";
 import { Services } from "@/components/portfolio/services";
 import { Certificates } from "@/components/portfolio/certificates";
 import { Contact } from "@/components/portfolio/contact";
@@ -17,6 +18,7 @@ export default function HomePage() {
       <Skills />
       <Experience />
       <Projects />
+      <VideoShorts />
       <Services />
       <Certificates />
       <Contact />

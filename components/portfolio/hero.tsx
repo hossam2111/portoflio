@@ -89,11 +89,16 @@ export function Hero() {
               size="lg" 
               variant="outline" 
               className="h-14 px-8 text-base group border-muted-foreground/30 hover:bg-accent/10"
-              onClick={scrollToContact}
-              data-testid="button-contact"
+              asChild
             >
-              <Download className="mr-2 h-5 w-5 transition-transform group-hover:translate-y-1" />
-              Download CV / Contact Me
+              <a 
+                href="/CV_Eng_Ibrahiem_Younis.pdf" 
+                download="CV_Eng_Ibrahiem_Younis.pdf"
+                data-testid="button-contact"
+              >
+                <Download className="mr-2 h-5 w-5 transition-transform group-hover:translate-y-1" />
+                Download CV
+              </a>
             </Button>
           </motion.div>
         </div>
