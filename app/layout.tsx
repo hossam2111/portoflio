@@ -22,6 +22,10 @@ export const metadata: Metadata = {
     "Egypt",
   ],
   authors: [{ name: "Ibrahim Younes" }],
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -29,12 +33,21 @@ export const metadata: Metadata = {
     title: "Ibrahim Younes | CNC Design & Custom Woodworking",
     description:
       "Professional engineering portfolio showcasing CNC programming, CAD/CAM design, woodworking, and custom manufacturing.",
+    images: [
+      {
+        url: "https://ibrahim.thefuture-makers.com/logo.png",
+        width: 1080,
+        height: 1080,
+        alt: "Ibrahim Younes - CNC Programmer & Designer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Ibrahim Younes | CNC Design & Custom Woodworking",
     description:
       "Professional engineering portfolio showcasing CNC programming, CAD/CAM design, woodworking, and custom manufacturing.",
+    images: ["https://ibrahim.thefuture-makers.com/logo.png"],
   },
   robots: {
     index: true,
