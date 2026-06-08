@@ -1,4 +1,3 @@
-import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
@@ -56,20 +55,8 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        <ClerkProvider
-          appearance={{
-            variables: {
-              colorPrimary: "#F59E0B",
-              colorBackground: "#0E141D",
-              colorText: "#F1F5F9",
-              colorInputBackground: "#101722",
-              colorInputText: "#F1F5F9",
-            },
-          }}
-        >
-          {children}
-          <Toaster />
-        </ClerkProvider>
+        {children}
+        <Toaster />
       </body>
     </html>
   );

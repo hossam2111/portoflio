@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase-server";
 import { categorySchema } from "@/lib/validators";
 
 async function verifyAdmin() {
-  const { userId } = await auth();
-  if (!userId) return false;
-
-  const adminIds = process.env.ADMIN_USER_IDS?.split(",").map((id) => id.trim()) || [];
-  return adminIds.includes(userId);
+  const cookieStore = await cookies();
+  const session = cookieStore.get("admin_session")?.value;
+  const secret = process.env.ADMIN_SECRET_TOKEN;
+  return !!(session && secret && session === secret);
 }
 
 // PUT /api/admin/categories/[id] - Update a category

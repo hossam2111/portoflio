@@ -1,8 +1,7 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -12,6 +11,7 @@ import {
   Mail,
   Settings,
   ChevronLeft,
+  LogOut,
 } from "lucide-react";
 
 const sidebarLinks = [
@@ -29,6 +29,13 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLogout() {
+    await fetch("/api/admin/auth", { method: "DELETE" });
+    router.push("/admin/sign-in");
+    router.refresh();
+  }
 
   // Don't show admin layout for sign-in page
   if (pathname.startsWith("/admin/sign-in")) {
@@ -79,15 +86,22 @@ export default function AdminLayout({
           })}
         </nav>
 
-        {/* Back to site */}
-        <div className="p-4 border-t border-[#1E293B]">
+        {/* Back to site + Logout */}
+        <div className="p-4 border-t border-[#1E293B] space-y-1">
           <Link
             href="/"
-            className="flex items-center gap-2 text-sm text-[#64748B] hover:text-[#F59E0B] transition-colors"
+            className="flex items-center gap-2 text-sm text-[#64748B] hover:text-[#F59E0B] transition-colors px-3 py-2 rounded-lg"
           >
             <ChevronLeft className="w-4 h-4" />
             Back to Website
           </Link>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 text-sm text-[#64748B] hover:text-red-400 transition-colors px-3 py-2 rounded-lg"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </button>
         </div>
       </aside>
 
@@ -113,13 +127,6 @@ export default function AdminLayout({
             >
               View Site →
             </Link>
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "w-8 h-8",
-                },
-              }}
-            />
           </div>
         </header>
 
