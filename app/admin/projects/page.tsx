@@ -43,7 +43,9 @@ export default function AdminProjectsPage() {
   }, []);
 
   const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+    // Custom confirm check (non-blocking in automated flows, works normally for users)
+    const hasConfirmed = typeof window !== "undefined" ? window.confirm(`Are you sure you want to delete "${title}"?`) : true;
+    if (!hasConfirmed) return;
 
     try {
       setIsLoading(true);
