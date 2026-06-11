@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Mail, Eye, Archive, Trash2, Loader2, Phone } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
+import { useConfirm } from "@/components/admin/ConfirmDialog";
 
 interface Message {
   id: string;
@@ -19,6 +20,7 @@ export default function AdminMessagesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  const { confirm, Dialog } = useConfirm();
 
   const fetchMessages = async () => {
     try {
@@ -50,7 +52,6 @@ export default function AdminMessagesPage() {
       });
 
       if (res.ok) {
-        // Update local state without refetching
         setMessages((prev) =>
           prev.map((msg) => (msg.id === id ? { ...msg, status: "read" } : msg))
         );
@@ -79,9 +80,16 @@ export default function AdminMessagesPage() {
     }
   };
 
-  const handleDelete = async (id: string, e: React.MouseEvent) => {
+  const handleDelete = async (id: string, name: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm("Are you sure you want to delete this message?")) return;
+
+    const ok = await confirm({
+      title: "Delete Message",
+      message: `Are you sure you want to permanently delete the message from "${name}"?`,
+      confirmLabel: "Delete",
+      danger: true,
+    });
+    if (!ok) return;
 
     try {
       const res = await fetch(`/api/admin/messages/${id}`, {
@@ -118,6 +126,7 @@ export default function AdminMessagesPage() {
 
   return (
     <div className="space-y-6">
+      {Dialog}
       <div>
         <h1 className="text-2xl font-bold mb-1">Messages</h1>
         <p className="text-sm text-[#64748B]">View and manage contact form submissions.</p>
@@ -186,7 +195,7 @@ export default function AdminMessagesPage() {
                             </button>
                           )}
                           <button
-                            onClick={(e) => handleDelete(msg.id, e)}
+                            onClick={(e) => handleDelete(msg.id, msg.name, e)}
                             className="p-2 rounded-lg text-[#64748B] hover:text-red-400 hover:bg-[#101722] transition-colors"
                             title="Delete Message"
                           >

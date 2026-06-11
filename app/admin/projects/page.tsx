@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus, Search, Eye, Pencil, Trash2, Loader2 } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
+import { useConfirm } from "@/components/admin/ConfirmDialog";
 
 interface Project {
   id: string;
@@ -22,6 +23,7 @@ export default function AdminProjectsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
+  const { confirm, Dialog } = useConfirm();
 
   const fetchProjects = async () => {
     try {
@@ -43,9 +45,13 @@ export default function AdminProjectsPage() {
   }, []);
 
   const handleDelete = async (id: string, title: string) => {
-    // Custom confirm check (non-blocking in automated flows, works normally for users)
-    const hasConfirmed = typeof window !== "undefined" ? window.confirm(`Are you sure you want to delete "${title}"?`) : true;
-    if (!hasConfirmed) return;
+    const ok = await confirm({
+      title: "Delete Project",
+      message: `Are you sure you want to delete "${title}"? This will permanently remove the project and all its media. This action cannot be undone.`,
+      confirmLabel: "Delete Project",
+      danger: true,
+    });
+    if (!ok) return;
 
     try {
       setIsLoading(true);
@@ -99,6 +105,7 @@ export default function AdminProjectsPage() {
 
   return (
     <div className="space-y-6">
+      {Dialog}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold mb-1">Projects</h1>

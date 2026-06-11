@@ -38,6 +38,7 @@ export async function PUT(
       .update({
         name: parsed.data.name,
         slug: parsed.data.slug,
+        cover_image: (body.cover_image as string | null) ?? null,
       })
       .eq("id", id)
       .select()

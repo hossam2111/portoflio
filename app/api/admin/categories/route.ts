@@ -35,6 +35,7 @@ export async function GET() {
       id: cat.id,
       name: cat.name,
       slug: cat.slug,
+      cover_image: cat.cover_image || null,
       created_at: cat.created_at,
       count: cat.projects ? cat.projects.length : 0,
     }));
@@ -69,6 +70,7 @@ export async function POST(request: NextRequest) {
       .insert({
         name: parsed.data.name,
         slug: parsed.data.slug,
+        cover_image: (body.cover_image as string | null) || null,
       })
       .select()
       .single();

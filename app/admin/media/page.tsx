@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Upload, Search, Trash2, Image, Film, Check, Loader2, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useConfirm } from "@/components/admin/ConfirmDialog";
 
 interface MediaItem {
   id: string;
@@ -21,6 +22,7 @@ export default function AdminMediaPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+  const { confirm, Dialog } = useConfirm();
 
   const fetchMedia = async () => {
     try {
@@ -42,7 +44,7 @@ export default function AdminMediaPage() {
   }, []);
 
   const toggleSelect = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation(); // Avoid copying url when checking checkbox
+    e.stopPropagation();
     setSelectedItems((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
@@ -90,6 +92,8 @@ export default function AdminMediaPage() {
       alert("An error occurred during file upload");
     } finally {
       setIsUploading(false);
+      // Reset input so same file can be re-uploaded
+      e.target.value = "";
     }
   };
 
@@ -99,7 +103,14 @@ export default function AdminMediaPage() {
       .map((item) => item.name);
 
     if (selectedNames.length === 0) return;
-    if (!confirm(`Are you sure you want to delete the ${selectedNames.length} selected files?`)) return;
+
+    const ok = await confirm({
+      title: "Delete Files",
+      message: `Are you sure you want to delete ${selectedNames.length} selected file(s)? This action cannot be undone.`,
+      confirmLabel: "Delete All",
+      danger: true,
+    });
+    if (!ok) return;
 
     try {
       setIsLoading(true);
@@ -126,7 +137,14 @@ export default function AdminMediaPage() {
 
   const handleSingleDelete = async (name: string, id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm(`Are you sure you want to delete this file: ${name}?`)) return;
+
+    const ok = await confirm({
+      title: "Delete File",
+      message: `Are you sure you want to delete "${name}"? This action cannot be undone.`,
+      confirmLabel: "Delete",
+      danger: true,
+    });
+    if (!ok) return;
 
     try {
       setIsLoading(true);
@@ -167,6 +185,7 @@ export default function AdminMediaPage() {
 
   return (
     <div className="space-y-6">
+      {Dialog}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold mb-1">Media Library</h1>
