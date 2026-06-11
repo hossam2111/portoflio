@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Plus, Trash, Loader2, Play, Upload } from "lucide-react";
 import { slugify, extractYouTubeId, getYouTubeThumbnail } from "@/lib/utils";
+import { useConfirm } from "@/components/admin/ConfirmDialog";
 
 interface Category {
   id: string;
@@ -63,6 +64,8 @@ export default function EditProjectPage({
   const [newGalleryCaption, setNewGalleryCaption] = useState("");
   const [newGalleryMediaType, setNewGalleryMediaType] = useState<"image" | "video">("image");
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
+  const [isSavingGallery, setIsSavingGallery] = useState(false);
+  const { confirm, Dialog: ConfirmDialogEl } = useConfirm();
 
   // Load project & categories
   useEffect(() => {
@@ -175,25 +178,76 @@ export default function EditProjectPage({
     setMaterials(materials.filter((m) => m !== mat));
   };
 
+  // Helper: save gallery array to DB immediately
+  const saveGalleryToDB = async (newGallery: typeof gallery) => {
+    try {
+      setIsSavingGallery(true);
+      const res = await fetch(`/api/admin/projects/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title, slug, description, challenge: challenge || null,
+          solution: solution || null, process: processField || null,
+          results: results || null, category_id: categoryId,
+          cover_image: coverImage, client_name: clientName || null,
+          location: location || null, duration: duration || null,
+          completion_date: completionDate || null, featured, status,
+          seo_title: seoTitle || null, seo_description: seoDescription || null,
+          before_image: beforeImage || null, after_image: afterImage || null,
+          technical_specs: technicalSpecs || null, youtube_url: youtubeUrl || null,
+          technologies, materials, gallery: newGallery,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Failed to save gallery changes");
+        return false;
+      }
+      return true;
+    } catch (err) {
+      setError("An error occurred while saving gallery");
+      return false;
+    } finally {
+      setIsSavingGallery(false);
+    }
+  };
+
   // Gallery helpers
-  const addGalleryItem = (e: React.FormEvent) => {
+  const addGalleryItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newGalleryUrl.trim()) return;
-    setGallery([
-      ...gallery,
-      {
-        file_url: newGalleryUrl.trim(),
-        caption: newGalleryCaption.trim() || undefined,
-        media_type: newGalleryMediaType,
-      },
-    ]);
+    const newItem = {
+      file_url: newGalleryUrl.trim(),
+      caption: newGalleryCaption.trim() || undefined,
+      media_type: newGalleryMediaType,
+    };
+    const newGallery = [...gallery, newItem];
+    setGallery(newGallery);
     setNewGalleryUrl("");
     setNewGalleryCaption("");
     setNewGalleryMediaType("image");
+    // Auto-save to DB
+    await saveGalleryToDB(newGallery);
   };
 
-  const removeGalleryItem = (index: number) => {
-    setGallery(gallery.filter((_, i) => i !== index));
+  const removeGalleryItem = async (index: number) => {
+    const item = gallery[index];
+    const label = item.caption || item.file_url.split('/').pop() || 'this item';
+    const ok = await confirm({
+      title: "Delete Gallery Item",
+      message: `Are you sure you want to remove "${label}" from the gallery? This will be saved immediately.`,
+      confirmLabel: "Delete",
+      danger: true,
+    });
+    if (!ok) return;
+    const newGallery = gallery.filter((_, i) => i !== index);
+    setGallery(newGallery);
+    // Auto-save to DB immediately
+    const saved = await saveGalleryToDB(newGallery);
+    if (!saved) {
+      // Revert if save failed
+      setGallery(gallery);
+    }
   };
 
   const handleGalleryFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -313,6 +367,7 @@ export default function EditProjectPage({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl pb-20">
+      {ConfirmDialogEl}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link
