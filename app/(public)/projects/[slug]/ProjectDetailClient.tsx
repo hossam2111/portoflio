@@ -307,10 +307,8 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                                     alt={media.caption || project.title}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                   />
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <button className="p-3 bg-black/80 rounded-full text-[#F59E0B] border border-primary/20 scale-90 group-hover:scale-100 transition-transform">
-                                      <Maximize2 className="w-5 h-5" />
-                                    </button>
+                                  <div className="absolute top-3 right-3 p-2 bg-black/70 rounded-lg text-[#F59E0B] border border-white/10 transition-all z-10 md:opacity-0 md:group-hover:opacity-100">
+                                    <Maximize2 className="w-4 h-4" />
                                   </div>
                                   {media.caption && (
                                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-sm text-[#F1F5F9] pointer-events-none">
@@ -335,10 +333,8 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                                     alt={project.title}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                   />
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <button className="p-3 bg-black/80 rounded-full text-[#F59E0B] border border-primary/20 scale-90 group-hover:scale-100 transition-transform">
-                                      <Maximize2 className="w-5 h-5" />
-                                    </button>
+                                  <div className="absolute top-3 right-3 p-2 bg-black/70 rounded-lg text-[#F59E0B] border border-white/10 transition-all z-10 md:opacity-0 md:group-hover:opacity-100">
+                                    <Maximize2 className="w-4 h-4" />
                                   </div>
                                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-sm text-[#F1F5F9] pointer-events-none">
                                     {project.title} - Cover Photo
