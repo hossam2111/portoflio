@@ -175,7 +175,7 @@ export default function AdminProjectsPage() {
                     className="hover:bg-[#101722]/50 transition-colors"
                   >
                     <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
+                      <Link href={`/admin/projects/${project.id}`} className="flex items-center gap-3 hover:text-[#F59E0B] transition-colors">
                         <div className="w-12 h-12 rounded-lg bg-[#101722] border border-[#1E293B] flex items-center justify-center shrink-0 overflow-hidden">
                           {project.cover_image ? (
                             <img src={project.cover_image} alt={project.title} className="w-full h-full object-cover" />
@@ -186,7 +186,7 @@ export default function AdminProjectsPage() {
                           )}
                         </div>
                         <span className="text-sm font-medium">{project.title}</span>
-                      </div>
+                      </Link>
                     </td>
                     <td className="px-5 py-4 text-sm text-[#94A3B8]">
                       {project.category?.name || "Uncategorized"}

@@ -133,7 +133,7 @@ export default function AdminDashboard() {
                   key={project.id}
                   className="flex items-center justify-between p-4 hover:bg-[#101722]/50 transition-colors"
                 >
-                  <div className="flex items-center gap-3">
+                  <Link href={`/admin/projects/${project.id}`} className="flex items-center gap-3 hover:text-[#F59E0B] transition-colors cursor-pointer">
                     <div className="w-10 h-10 rounded-lg bg-[#101722] border border-[#1E293B] flex items-center justify-center">
                       <FolderOpen className="w-4 h-4 text-[#64748B]" />
                     </div>
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
                       <p className="text-sm font-medium">{project.title}</p>
                       <p className="text-xs text-[#64748B]">{project.category?.name || "Uncategorized"}</p>
                     </div>
-                  </div>
+                  </Link>
                   <div className="flex items-center gap-3">
                     <span
                       className={cn(
