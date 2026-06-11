@@ -121,8 +121,9 @@ export default function AdminMediaPage() {
       });
 
       if (res.ok) {
-        setMediaItems((prev) => prev.filter((item) => !selectedItems.includes(item.id)));
         setSelectedItems([]);
+        // Re-fetch from server to confirm deletion persisted
+        await fetchMedia();
       } else {
         const data = await res.json();
         alert(data.error || "Failed to delete files");
@@ -155,11 +156,12 @@ export default function AdminMediaPage() {
       });
 
       if (res.ok) {
-        setMediaItems((prev) => prev.filter((item) => item.id !== id));
         setSelectedItems((prev) => prev.filter((x) => x !== id));
+        // Re-fetch from server to confirm deletion persisted
+        await fetchMedia();
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to delete file");
+        alert("Delete failed: " + (data.error || "Unknown error"));
       }
     } catch (err) {
       console.error("Delete error:", err);
