@@ -8,7 +8,6 @@ export function Skills() {
     { name: "3ds Max (Visualization)", level: 85 },
     { name: "Rhino (3D Modeling)", level: 88 },
     { name: "Maestro & EasyWOOD (CNC)", level: 92 },
-    { name: "CNC Machine Maintenance", level: 85 },
     { name: "Team Training & Workflow Management", level: 80 }
   ];
 

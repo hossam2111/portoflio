@@ -65,6 +65,53 @@ interface Project {
   image: string;
 }
 
+// الكاتجوريات الثابتة مع أيقوناتها — لا تتغير أبداً
+const FIXED_CATEGORIES: { name: string; icon: React.ReactNode }[] = [
+  {
+    name: "All",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+    ),
+  },
+  {
+    name: "Interior Design",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    ),
+  },
+  {
+    name: "CNC Programming",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+        <path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>
+      </svg>
+    ),
+  },
+  {
+    name: "3D Design",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path d="M12 2l10 6v8l-10 6L2 16V8z"/><path d="M12 22V10"/><path d="M22 8l-10 4L2 8"/>
+      </svg>
+    ),
+  },
+  {
+    name: "Automation",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 8v4l3 3"/>
+      </svg>
+    ),
+  },
+];
+
 export function Projects() {
   const [filter, setFilter] = useState("All");
   const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
@@ -92,7 +139,7 @@ export function Projects() {
             id: p.id,
             title: p.title,
             slug: p.slug,
-            category: p.category?.name || "CNC Work",
+            category: p.category?.name || "CNC Programming",
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             tech: p.technologies?.map((t: any) => t.technology_name) || [],
             image: p.cover_image || "https://qwznevdakjcylosajrxj.supabase.co/storage/v1/object/public/portfolio/images/project1.png"
@@ -108,8 +155,6 @@ export function Projects() {
     }
     loadProjects();
   }, []);
-
-  const categories = ["All", ...Array.from(new Set(projects.map(p => p.category)))];
 
   const filteredProjects = filter === "All" 
     ? projects 
@@ -131,23 +176,25 @@ export function Projects() {
               Featured Projects
             </h2>
             <p className="text-muted-foreground max-w-xl">
-              A selection of precision manufacturing and design projects showcasing expertise across different CNC and CAD/CAM disciplines.
+              A selection of precision manufacturing and design projects showcasing expertise across different CAD/CAM disciplines.
             </p>
           </div>
 
+          {/* الكاتجوريات الثابتة — لا تتغير أبداً */}
           <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (
+            {FIXED_CATEGORIES.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  filter === cat 
+                key={cat.name}
+                onClick={() => setFilter(cat.name)}
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  filter === cat.name 
                     ? "bg-primary text-primary-foreground" 
                     : "bg-secondary text-secondary-foreground hover:bg-primary/20"
                 }`}
-                data-testid={`filter-${cat.replace(/\s+/g, '-').toLowerCase()}`}
+                data-testid={`filter-${cat.name.replace(/\s+/g, '-').toLowerCase()}`}
               >
-                {cat}
+                {cat.icon}
+                {cat.name}
               </button>
             ))}
           </div>
@@ -176,7 +223,8 @@ export function Projects() {
                     </div>
                     <CardHeader className="pb-3 flex-grow">
                       <div className="flex justify-between items-start mb-2">
-                        <Badge variant="outline" className="text-xs font-normal border-primary/30 text-primary">
+                        <Badge variant="outline" className="text-xs font-normal border-primary/30 text-primary flex items-center gap-1">
+                          {FIXED_CATEGORIES.find(c => c.name === project.category)?.icon}
                           {project.category}
                         </Badge>
                       </div>
