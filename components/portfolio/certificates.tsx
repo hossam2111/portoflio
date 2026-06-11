@@ -18,7 +18,7 @@ export function Certificates() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="mb-16 text-center"
         >
@@ -35,7 +35,7 @@ export function Certificates() {
               key={index}
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
               <Card className="h-full bg-card border-border hover:border-primary/40 transition-colors overflow-hidden group">

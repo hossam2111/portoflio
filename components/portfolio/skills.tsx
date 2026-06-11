@@ -23,7 +23,7 @@ export function Skills() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="mb-16"
         >
@@ -32,12 +32,12 @@ export function Skills() {
             Skills & Education
           </h2>
         </motion.div>
-
+ 
         <div className="grid lg:grid-cols-2 gap-16">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <h3 className="text-2xl font-semibold mb-8 border-b border-border pb-4">Technical Expertise</h3>
@@ -53,7 +53,7 @@ export function Skills() {
                       className="h-full bg-primary"
                       initial={{ width: 0 }}
                       whileInView={{ width: `${skill.level}%` }}
-                      viewport={{ once: true, margin: "-50px" }}
+                      viewport={{ once: true }}
                       transition={{ duration: 1, delay: 0.2 + (index * 0.1) }}
                     />
                   </div>
@@ -65,7 +65,7 @@ export function Skills() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col gap-12"
           >
