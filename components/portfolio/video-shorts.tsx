@@ -39,7 +39,7 @@ export function VideoShorts() {
 
   return (
     <section id="videos" className="py-24 bg-secondary/20">
-      <div className="container px-4 mx-auto">
+      <div className="max-w-7xl mx-auto px-4 w-full">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -38,7 +38,7 @@ export function Hero() {
         <div className="absolute top-[40%] right-[15%] w-[20vw] h-[20vw] rotate-45 border border-primary/30"></div>
       </div>
 
-      <div className="container px-4 mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto px-4 w-full relative z-10">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

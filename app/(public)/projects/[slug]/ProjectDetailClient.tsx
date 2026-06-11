@@ -12,6 +12,8 @@ import {
   ChevronRight,
   Play,
   ArrowLeft,
+  Maximize2,
+  X as CloseIcon,
 } from "lucide-react";
 import { cn, extractYouTubeId, getYouTubeEmbedUrl } from "@/lib/utils";
 
@@ -64,19 +66,14 @@ const fadeUp = {
 };
 
 export default function ProjectDetailClient({ project }: { project: Project }) {
-  const hasMedia = !!(project.project_media && project.project_media.length > 0);
-  const hasVideo = !!project.youtube_url;
-  const [activeTab, setActiveTab] = useState(hasMedia ? "Gallery" : hasVideo ? "Video" : "Overview");
+  const [activeTab, setActiveTab] = useState("Gallery");
+  const [modalMedia, setModalMedia] = useState<{ type: "image" | "video" | "youtube"; url: string; caption?: string } | null>(null);
 
-  // Gallery and Video come first, then the rest
-  const tabs: string[] = [];
-  if (hasMedia) tabs.push("Gallery");
-  if (hasVideo) tabs.push("Video");
-  tabs.push("Overview");
+  // Gallery, Video, Overview, Technologies always present
+  const tabs: string[] = ["Gallery", "Video", "Overview", "Technologies"];
   if (project.challenge) tabs.push("Challenge");
   if (project.solution) tabs.push("Solution");
   if (project.process) tabs.push("Process");
-  if (project.technologies && project.technologies.length > 0) tabs.push("Technologies");
   if (project.materials && project.materials.length > 0) tabs.push("Materials");
   if (project.results) tabs.push("Results");
 
@@ -287,30 +284,36 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                 </motion.div>
               )}
 
-              {activeTab === "Gallery" && project.project_media && (
+              {activeTab === "Gallery" && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12">
                   {(() => {
-                    const imagesMedia = project.project_media.filter(m => m.media_type === "image");
-                    const videosMedia = project.project_media.filter(m => m.media_type === "video");
+                    const hasImages = !!(project.project_media && project.project_media.filter(m => m.media_type === "image").length > 0);
+                    const hasVideos = !!(project.project_media && project.project_media.filter(m => m.media_type === "video").length > 0);
 
                     return (
                       <>
-                        {imagesMedia.length > 0 && (
+                        {hasImages ? (
                           <div>
                             <h2 className="text-xl font-semibold mb-6">Photos Gallery</h2>
-                            <div className="grid grid-cols-2 gap-6">
-                              {imagesMedia.map((media) => (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                              {project.project_media!.filter(m => m.media_type === "image").map((media) => (
                                 <div
                                   key={media.id}
-                                  className="aspect-[4/3] rounded-xl border border-[#1E293B] bg-gradient-to-br from-[#101722] to-[#0E141D] overflow-hidden relative group"
+                                  className="aspect-[4/3] rounded-xl border border-[#1E293B] bg-gradient-to-br from-[#101722] to-[#0E141D] overflow-hidden relative group cursor-pointer"
+                                  onClick={() => setModalMedia({ type: "image", url: media.file_url, caption: media.caption })}
                                 >
                                   <img
                                     src={media.file_url}
                                     alt={media.caption || project.title}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                   />
+                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <button className="p-3 bg-black/80 rounded-full text-[#F59E0B] border border-primary/20 scale-90 group-hover:scale-100 transition-transform">
+                                      <Maximize2 className="w-5 h-5" />
+                                    </button>
+                                  </div>
                                   {media.caption && (
-                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-sm text-[#F1F5F9]">
+                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-sm text-[#F1F5F9] pointer-events-none">
                                       {media.caption}
                                     </div>
                                   )}
@@ -318,36 +321,84 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                               ))}
                             </div>
                           </div>
+                        ) : (
+                          <div>
+                            <h2 className="text-xl font-semibold mb-6">Photos Gallery</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                              {project.cover_image ? (
+                                <div 
+                                  className="aspect-[4/3] rounded-xl border border-[#1E293B] bg-gradient-to-br from-[#101722] to-[#0E141D] overflow-hidden relative group cursor-pointer"
+                                  onClick={() => setModalMedia({ type: "image", url: project.cover_image, caption: project.title })}
+                                >
+                                  <img
+                                    src={project.cover_image}
+                                    alt={project.title}
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                  />
+                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <button className="p-3 bg-black/80 rounded-full text-[#F59E0B] border border-primary/20 scale-90 group-hover:scale-100 transition-transform">
+                                      <Maximize2 className="w-5 h-5" />
+                                    </button>
+                                  </div>
+                                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-sm text-[#F1F5F9] pointer-events-none">
+                                    {project.title} - Cover Photo
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="aspect-[4/3] rounded-xl border border-[#1E293B] bg-[#0E141D] flex items-center justify-center col-span-full">
+                                  <span className="text-[#64748B]">No photos available in gallery</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         )}
 
-                        {videosMedia.length > 0 && (
-                          <div>
+                        {hasVideos && (
+                          <div className="pt-8">
                             <h2 className="text-xl font-semibold mb-6">Videos Gallery</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                              {videosMedia.map((media) => (
+                              {project.project_media!.filter(m => m.media_type === "video").map((media) => (
                                 <div
                                   key={media.id}
-                                  className="aspect-video rounded-xl border border-[#1E293B] bg-black overflow-hidden relative"
+                                  className="aspect-video rounded-xl border border-[#1E293B] bg-black overflow-hidden relative group cursor-pointer"
                                 >
                                   {(() => {
                                     const yId = extractYouTubeId(media.file_url);
                                     if (yId) {
                                       return (
-                                        <iframe
-                                          src={getYouTubeEmbedUrl(yId)}
-                                          title={media.caption || "Gallery Video"}
-                                          className="w-full h-full"
-                                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                          allowFullScreen
-                                        />
+                                        <>
+                                          <iframe
+                                            src={getYouTubeEmbedUrl(yId)}
+                                            title={media.caption || "Gallery Video"}
+                                            className="w-full h-full"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                          />
+                                          <button 
+                                            onClick={() => setModalMedia({ type: "youtube", url: getYouTubeEmbedUrl(yId)!, caption: media.caption })}
+                                            className="absolute top-3 right-3 p-2 bg-black/80 hover:bg-black rounded-lg text-[#F59E0B] z-20 border border-primary/10 transition-colors"
+                                            title="Maximize"
+                                          >
+                                            <Maximize2 className="w-4 h-4" />
+                                          </button>
+                                        </>
                                       );
                                     } else {
                                       return (
-                                        <video
-                                          src={media.file_url}
-                                          controls
-                                          className="w-full h-full object-cover"
-                                        />
+                                        <>
+                                          <video
+                                            src={media.file_url}
+                                            controls
+                                            className="w-full h-full object-cover"
+                                          />
+                                          <button 
+                                            onClick={() => setModalMedia({ type: "video", url: media.file_url, caption: media.caption })}
+                                            className="absolute top-3 right-3 p-2 bg-black/80 hover:bg-black rounded-lg text-[#F59E0B] z-20 border border-primary/10 transition-colors"
+                                            title="Maximize"
+                                          >
+                                            <Maximize2 className="w-4 h-4" />
+                                          </button>
+                                        </>
                                       );
                                     }
                                   })()}
@@ -367,37 +418,51 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
                 </motion.div>
               )}
 
-              {activeTab === "Video" && youtubeEmbedUrl && (
+              {activeTab === "Video" && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                   <h2 className="text-xl font-semibold mb-4">Project Showcase Video</h2>
-                  <div className={
-                    project.youtube_url?.includes('/shorts/') 
-                      ? "aspect-[9/16] w-full max-w-sm mx-auto rounded-xl border border-[#1E293B] bg-black overflow-hidden shadow-2xl shadow-black/50"
-                      : "aspect-video w-full rounded-xl border border-[#1E293B] bg-gradient-to-br from-[#101722] to-[#0E141D] overflow-hidden"
-                  }>
-                    <iframe
-                      src={youtubeEmbedUrl}
-                      title={`${project.title} Video Showcase`}
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
+                  {youtubeEmbedUrl ? (
+                    <div className={
+                      project.youtube_url?.includes('/shorts/') 
+                        ? "aspect-[9/16] w-full max-w-sm mx-auto rounded-xl border border-[#1E293B] bg-black overflow-hidden shadow-2xl shadow-black/50"
+                        : "aspect-video w-full rounded-xl border border-[#1E293B] bg-gradient-to-br from-[#101722] to-[#0E141D] overflow-hidden"
+                    }>
+                      <iframe
+                        src={youtubeEmbedUrl}
+                        title={`${project.title} Video Showcase`}
+                        className="w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  ) : (
+                    <div className="aspect-video w-full rounded-xl border border-[#1E293B] bg-gradient-to-br from-[#101722] to-[#0E141D] flex items-center justify-center">
+                      <span className="text-[#64748B]">Showcase video coming soon!</span>
+                    </div>
+                  )}
                 </motion.div>
               )}
 
-              {activeTab === "Technologies" && project.technologies && (
+              {activeTab === "Technologies" && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                   <h2 className="text-xl font-semibold mb-4">Technologies Used</h2>
                   <div className="flex flex-wrap gap-2">
-                    {project.technologies.map((t) => (
-                      <span
-                        key={t.id}
-                        className="px-4 py-2 text-sm bg-[#101722] border border-[#1E293B] rounded-lg text-[#F59E0B]"
-                      >
-                        {t.technology_name}
-                      </span>
-                    ))}
+                    {project.technologies && project.technologies.length > 0 ? (
+                      project.technologies.map((t) => (
+                        <span
+                          key={t.id}
+                          className="px-4 py-2 text-sm bg-[#101722] border border-[#1E293B] rounded-lg text-[#F59E0B]"
+                        >
+                          {t.technology_name}
+                        </span>
+                      ))
+                    ) : (
+                      <>
+                        <span className="px-4 py-2 text-sm bg-[#101722] border border-[#1E293B] rounded-lg text-[#F59E0B]">AutoCAD</span>
+                        <span className="px-4 py-2 text-sm bg-[#101722] border border-[#1E293B] rounded-lg text-[#F59E0B]">ArtCAM</span>
+                        <span className="px-4 py-2 text-sm bg-[#101722] border border-[#1E293B] rounded-lg text-[#F59E0B]">CNC Machining</span>
+                      </>
+                    )}
                   </div>
                 </motion.div>
               )}
@@ -502,6 +567,73 @@ export default function ProjectDetailClient({ project }: { project: Project }) {
           </div>
         </div>
       </section>
+      {modalMedia && (
+        <MediaModal media={modalMedia} onClose={() => setModalMedia(null)} />
+      )}
     </>
+  );
+}
+
+/* Dynamic fullscreen modal helper for project media preview */
+interface MediaModalProps {
+  media: { type: "image" | "video" | "youtube"; url: string; caption?: string };
+  onClose: () => void;
+}
+
+function MediaModal({ media, onClose }: MediaModalProps) {
+  return (
+    <div 
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 p-4 backdrop-blur-md transition-all duration-300 animate-in fade-in"
+      onClick={onClose}
+    >
+      {/* Close button */}
+      <button 
+        onClick={onClose}
+        className="absolute top-4 right-4 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors cursor-pointer z-50 border border-white/10"
+        aria-label="Close"
+      >
+        <CloseIcon className="w-6 h-6" />
+      </button>
+
+      {/* Content wrapper */}
+      <div 
+        className="relative w-full max-w-5xl max-h-[80vh] flex items-center justify-center overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {media.type === "image" && (
+          <img 
+            src={media.url} 
+            alt={media.caption || "Zoomed media"} 
+            className="max-w-full max-h-[80vh] object-contain rounded-lg border border-[#1E293B] shadow-2xl"
+          />
+        )}
+        {media.type === "video" && (
+          <video 
+            src={media.url} 
+            controls 
+            autoPlay
+            className="max-w-full max-h-[80vh] object-contain rounded-lg border border-[#1E293B] shadow-2xl"
+          />
+        )}
+        {media.type === "youtube" && (
+          <div className="w-full aspect-video rounded-lg border border-[#1E293B] overflow-hidden shadow-2xl">
+            <iframe
+              src={`${media.url}?autoplay=1`}
+              title={media.caption || "Showcase Video"}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Caption overlay */}
+      {media.caption && (
+        <div className="mt-4 px-6 py-2 bg-black/60 border border-white/5 rounded-full text-sm text-[#94A3B8] max-w-xl text-center">
+          {media.caption}
+        </div>
+      )}
+    </div>
   );
 }

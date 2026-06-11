@@ -162,6 +162,10 @@
     line-height: 1.6;
     overflow-x: hidden;
   }
+
+  .container-custom {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
 }
 
 /* Custom Scrollbar */

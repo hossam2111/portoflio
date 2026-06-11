@@ -28,7 +28,7 @@ export function Services() {
 
   return (
     <section id="services" className="py-24 bg-muted/30">
-      <div className="container px-4 mx-auto">
+      <div className="max-w-7xl mx-auto px-4 w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

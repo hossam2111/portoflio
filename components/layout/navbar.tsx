@@ -86,7 +86,7 @@ export default function Navbar() {
           : "bg-transparent py-5"
       }`}
     >
-      <div className="container mx-auto px-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto w-full px-4 flex items-center justify-between">
         <a
           href={pathname === "/" ? "#home" : "/#home"}
           onClick={(e) => scrollToSection(e, "#home")}

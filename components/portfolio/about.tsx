@@ -19,7 +19,7 @@ export function About() {
 
   return (
     <section id="about" className="py-24 bg-muted/30">
-      <div className="container px-4 mx-auto">
+      <div className="max-w-7xl mx-auto px-4 w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -48,7 +48,7 @@ export function About() {
               My approach combines technical rigor with an eye for design, allowing me to bridge the gap between creative concept and mechanical execution. Whether programming intricate architectural carvings or machining industrial components with zero tolerance for error, I approach every project with a master craftsman&apos;s mindset.
             </p>
 
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {stats.map((stat, i) => (
                 <div key={i} className="flex flex-col">
                   <span className="text-4xl font-bold text-primary mb-2">{stat.value}</span>
